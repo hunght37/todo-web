@@ -15,6 +15,11 @@ const mainContent = document.getElementById('mainContent');
 const statsContent = document.getElementById('statsContent');
 const settingsContent = document.getElementById('settingsContent');
 
+// New menu icon elements
+const menuHomeIcon = document.getElementById('menuHomeIcon');
+const menuStatsIcon = document.getElementById('menuStatsIcon');
+const menuSettingsIcon = document.getElementById('menuSettingsIcon');
+
 let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 let darkMode = localStorage.getItem('darkMode') === 'enabled';
 let categories = new Set();
@@ -83,16 +88,31 @@ menuHome.addEventListener('click', showHome);
 menuStats.addEventListener('click', showStats);
 menuSettings.addEventListener('click', showSettings);
 
+// Add event listeners for new menu icons
+if (menuHomeIcon) menuHomeIcon.addEventListener('click', showHome);
+if (menuStatsIcon) menuStatsIcon.addEventListener('click', showStats);
+if (menuSettingsIcon) menuSettingsIcon.addEventListener('click', showSettings);
+
 function updateStats() {
   const totalTasks = tasks.length;
-  const completedTasks = tasks.filter(task => task.completed).length;
+  const completedTasks = tasks.filter((task) => task.completed).length;
   const incompleteTasks = totalTasks - completedTasks;
-  const highPriorityTasks = tasks.filter(task => task.priority === 'Cao').length;
+  const highPriorityTasks = tasks.filter(
+    (task) => task.priority === 'Cao'
+  ).length;
 
-  document.getElementById('totalTasks').textContent = `Tổng số công việc: ${totalTasks}`;
-  document.getElementById('completedTasks').textContent = `Công việc đã hoàn thành: ${completedTasks}`;
-  document.getElementById('incompleteTasks').textContent = `Công việc chưa hoàn thành: ${incompleteTasks}`;
-  document.getElementById('highPriorityTasks').textContent = `Công việc ưu tiên cao: ${highPriorityTasks}`;
+  document.getElementById(
+    'totalTasks'
+  ).textContent = `Tổng số công việc: ${totalTasks}`;
+  document.getElementById(
+    'completedTasks'
+  ).textContent = `Công việc đã hoàn thành: ${completedTasks}`;
+  document.getElementById(
+    'incompleteTasks'
+  ).textContent = `Công việc chưa hoàn thành: ${incompleteTasks}`;
+  document.getElementById(
+    'highPriorityTasks'
+  ).textContent = `Công việc ưu tiên cao: ${highPriorityTasks}`;
 }
 
 function addTask(task) {
@@ -119,15 +139,29 @@ function editTask(index) {
 
   listItem.innerHTML = `
     <form class="edit-form flex flex-col space-y-2">
-      <input type="text" class="edit-input px-2 py-1 border rounded dark:bg-gray-700 dark:text-white" value="${task.text}">
+      <input type="text" class="edit-input px-2 py-1 border rounded dark:bg-gray-700 dark:text-white" value="${
+        task.text
+      }">
       <select class="edit-priority px-2 py-1 border rounded dark:bg-gray-700 dark:text-white">
-        <option value="Thấp" ${task.priority === 'Thấp' ? 'selected' : ''}>Thấp</option>
-        <option value="Trung bình" ${task.priority === 'Trung bình' ? 'selected' : ''}>Trung bình</option>
-        <option value="Cao" ${task.priority === 'Cao' ? 'selected' : ''}>Cao</option>
+        <option value="Thấp" ${
+          task.priority === 'Thấp' ? 'selected' : ''
+        }>Thấp</option>
+        <option value="Trung bình" ${
+          task.priority === 'Trung bình' ? 'selected' : ''
+        }>Trung bình</option>
+        <option value="Cao" ${
+          task.priority === 'Cao' ? 'selected' : ''
+        }>Cao</option>
       </select>
-      <input type="date" class="edit-start-date px-2 py-1 border rounded dark:bg-gray-700 dark:text-white" value="${task.startDate}">
-      <input type="date" class="edit-end-date px-2 py-1 border rounded dark:bg-gray-700 dark:text-white" value="${task.endDate}">
-      <input type="text" class="edit-category px-2 py-1 border rounded dark:bg-gray-700 dark:text-white" value="${task.category}">
+      <input type="date" class="edit-start-date px-2 py-1 border rounded dark:bg-gray-700 dark:text-white" value="${
+        task.startDate
+      }">
+      <input type="date" class="edit-end-date px-2 py-1 border rounded dark:bg-gray-700 dark:text-white" value="${
+        task.endDate
+      }">
+      <input type="text" class="edit-category px-2 py-1 border rounded dark:bg-gray-700 dark:text-white" value="${
+        task.category
+      }">
       <div class="flex space-x-2">
         <button type="submit" class="save-btn bg-green-500 text-white px-2 py-1 rounded">Lưu</button>
         <button type="button" class="cancel-btn bg-red-500 text-white px-2 py-1 rounded">Hủy</button>
@@ -171,17 +205,29 @@ function renderTasks() {
 
   filteredTasks.forEach((task, index) => {
     const listItem = document.createElement('li');
-    listItem.className = `bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md flex flex-col md:flex-row justify-between items-start md:items-center space-y-2 md:space-y-0 ${task.completed ? 'opacity-50' : ''}`;
-    
+    listItem.className = `bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md flex flex-col md:flex-row justify-between items-start md:items-center space-y-2 md:space-y-0 ${
+      task.completed ? 'opacity-50' : ''
+    }`;
+
     listItem.innerHTML = `
       <div class="flex items-center space-x-2">
-        <input type="checkbox" ${task.completed ? 'checked' : ''} class="form-checkbox h-5 w-5 text-blue-600 dark:text-blue-400">
-        <span class="text-lg font-semibold ${task.completed ? 'line-through' : ''}">${task.text}</span>
+        <input type="checkbox" ${
+          task.completed ? 'checked' : ''
+        } class="form-checkbox h-5 w-5 text-blue-600 dark:text-blue-400">
+        <span class="text-lg font-semibold ${
+          task.completed ? 'line-through' : ''
+        }">${task.text}</span>
       </div>
       <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
-        <span class="text-sm ${getPriorityColor(task.priority)}">${task.priority}</span>
-        <span class="text-sm text-gray-600 dark:text-gray-400">${task.startDate} - ${task.endDate}</span>
-        <span class="text-sm text-gray-600 dark:text-gray-400">${task.category}</span>
+        <span class="text-sm ${getPriorityColor(task.priority)}">${
+      task.priority
+    }</span>
+        <span class="text-sm text-gray-600 dark:text-gray-400">${
+          task.startDate
+        } - ${task.endDate}</span>
+        <span class="text-sm text-gray-600 dark:text-gray-400">${
+          task.category
+        }</span>
         <button class="edit-btn text-blue-500 hover:text-blue-700">Sửa</button>
         <button class="delete-btn text-red-500 hover:text-red-700">Xóa</button>
       </div>
@@ -221,22 +267,25 @@ function filterTasks() {
   const statusFilter = filterStatus.value;
   const categoryFilter = filterCategory.value;
 
-  return tasks.filter(task => {
+  return tasks.filter((task) => {
     const matchesSearch = task.text.toLowerCase().includes(searchTerm);
-    const matchesPriority = priorityFilter === 'all' || task.priority === priorityFilter;
-    const matchesStatus = statusFilter === 'all' || 
-      (statusFilter === 'completed' && task.completed) || 
+    const matchesPriority =
+      priorityFilter === 'all' || task.priority === priorityFilter;
+    const matchesStatus =
+      statusFilter === 'all' ||
+      (statusFilter === 'completed' && task.completed) ||
       (statusFilter === 'incomplete' && !task.completed);
-    const matchesCategory = categoryFilter === 'all' || task.category === categoryFilter;
+    const matchesCategory =
+      categoryFilter === 'all' || task.category === categoryFilter;
 
     return matchesSearch && matchesPriority && matchesStatus && matchesCategory;
   });
 }
 
 function updateCategories() {
-  categories = new Set(tasks.map(task => task.category));
+  categories = new Set(tasks.map((task) => task.category));
   filterCategory.innerHTML = '<option value="all">Tất cả danh mục</option>';
-  categories.forEach(category => {
+  categories.forEach((category) => {
     if (category) {
       const option = document.createElement('option');
       option.value = category;
@@ -261,7 +310,7 @@ addTaskForm.addEventListener('submit', (e) => {
       priority: prioritySelect.value,
       startDate: startDateInput.value,
       endDate: endDateInput.value,
-      category: categoryInput.value.trim()
+      category: categoryInput.value.trim(),
     };
 
     addTask(newTask);
