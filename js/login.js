@@ -1,12 +1,8 @@
 const loginForm = document.getElementById('loginForm');
 const errorDiv = document.getElementById('error');
 
-// Initialize the database when the page loads
-initDB().then(() => {
-  console.log("Database initialized successfully");
-}).catch((error) => {
-  console.error("Error initializing database:", error);
-});
+initDB().then(() => console.log("Database initialized"))
+  .catch(error => console.error("Database error:", error));
 
 loginForm.addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -16,12 +12,13 @@ loginForm.addEventListener('submit', async (event) => {
   try {
     const user = await getUser(username);
     if (user && user.password === password) {
+      localStorage.setItem('currentUser', username);
       window.location.href = 'todo.html';
     } else {
       errorDiv.classList.remove('hidden');
     }
   } catch (error) {
-    console.error("Error during login:", error);
+    console.error("Login error:", error);
     errorDiv.classList.remove('hidden');
   }
 });
