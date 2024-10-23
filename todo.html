@@ -1,226 +1,80 @@
 <!DOCTYPE html>
 <html lang="en" class="light">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Danh sách việc cần làm</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
     <style>
-      .dark {
-        color-scheme: dark;
-      }
-      .dark body {
-        background-color: #121212;
-        color: #e0e0e0;
-      }
-      .dark .bg-white {
-        background-color: #1e1e1e;
-      }
-      .dark .bg-gray-100 {
-        background-color: #121212;
-      }
-      .dark .bg-gray-200 {
-        background-color: #2a2a2a;
-      }
-      .dark .bg-gray-800 {
-        background-color: #1e1e1e;
-      }
-      .dark .text-gray-700 {
-        color: #e0e0e0;
-      }
-      .dark .text-gray-800 {
-        color: #f0f0f0;
-      }
-      .dark .border-gray-600 {
-        border-color: #4a4a4a;
-      }
-      .dark .bg-green-900 {
-        background-color: #1a4731;
-      }
+        .dark { color-scheme: dark; }
+        .dark body { background-color: #1a1a1a; color: #e0e0e0; }
+        .dark .bg-white { background-color: #2a2a2a; }
+        .dark .bg-gray-100 { background-color: #1a1a1a; }
+        .dark .bg-gray-200 { background-color: #333333; }
+        .dark .bg-gray-800 { background-color: #1a1a1a; }
+        .dark .text-gray-700 { color: #e0e0e0; }
+        .dark .text-gray-800 { color: #f0f0f0; }
+        .dark .border-gray-600 { border-color: #4a4a4a; }
     </style>
-  </head>
-  <body class="bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-200">
-    <!-- Menu Bar -->
-    <nav class="bg-gray-800 text-white p-4">
-      <div class="container mx-auto flex justify-between items-center">
-        <h1 class="text-xl font-bold whitespace-nowrap">Todo App</h1>
-        <ul class="flex space-x-4 text-sm">
-          <li>
-            <a href="#" id="menuHome" class="hover:text-gray-300">Trang chủ</a>
-          </li>
-          <li>
-            <a href="#" id="menuStats" class="hover:text-gray-300">Thống kê</a>
-          </li>
-          <li>
-            <a href="#" id="menuSettings" class="hover:text-gray-300">Cài đặt</a>
-          </li>
-          <li>
-            <a href="index.html" id="menuLogout" class="hover:text-gray-300">Đăng xuất</a>
-          </li>
-        </ul>
-      </div>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-200">
+    <nav class="bg-white dark:bg-gray-800 shadow-lg p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Todo App</h1>
+            <div class="flex items-center space-x-4">
+                <button id="darkModeToggle" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700">
+                    🌓
+                </button>
+                <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded">
+                    Đăng xuất
+                </button>
+            </div>
+        </div>
     </nav>
 
-    <div class="container mx-auto px-4 py-8 max-w-4xl">
-      <!-- Main content -->
-      <div id="mainContent">
-        <div class="flex justify-between items-center mb-8">
-          <h1 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 whitespace-nowrap">
-            Danh sách việc cần làm
-          </h1>
-          <button
-            id="darkModeToggle"
-            class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6 text-gray-800 dark:text-gray-200"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-              />
-            </svg>
-          </button>
-        </div>
-        <div class="bg-white dark:bg-gray-800 p-4 md:p-6 rounded-lg shadow-md mb-8">
-          <h2 class="text-xl md:text-2xl font-bold mb-4 text-gray-700 dark:text-gray-200">
-            Thêm công việc mới
-          </h2>
-          <form id="addTaskForm" class="space-y-4">
-            <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
-              <input
-                type="text"
-                id="taskInput"
-                placeholder="Nhập công việc..."
-                class="flex-grow px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-                required
-              />
-              <select
-                id="prioritySelect"
-                class="px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-              >
-                <option value="Thấp">Thấp</option>
-                <option value="Trung bình">Trung bình</option>
-                <option value="Cao">Cao</option>
-              </select>
+    <div class="container mx-auto p-4">
+        <form id="addTaskForm" class="mb-8 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="text" name="taskInput" placeholder="Thêm công việc mới..." 
+                       class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white" required>
+                <select name="priority" class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white">
+                    <option value="Thấp">Thấp</option>
+                    <option value="Trung bình">Trung bình</option>
+                    <option value="Cao">Cao</option>
+                </select>
+                <input type="date" name="startDate" class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white">
+                <input type="date" name="endDate" class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white">
+                <input type="text" name="category" placeholder="Danh mục" 
+                       class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white">
+                <button type="submit" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+                    Thêm công việc
+                </button>
             </div>
-            <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
-              <div class="flex-1 space-y-1">
-                <label for="startDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Bắt đầu:</label>
-                <input
-                  type="date"
-                  id="startDate"
-                  class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-                />
-              </div>
-              <div class="flex-1 space-y-1">
-                <label for="endDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Kết thúc:</label>
-                <input
-                  type="date"
-                  id="endDate"
-                  class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-                />
-              </div>
-            </div>
-            <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
-              <input
-                type="text"
-                id="categoryInput"
-                placeholder="Nhập danh mục (không bắt buộc)"
-                class="flex-grow px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-              />
-            </div>
-            <button
-              type="submit"
-              class="w-full md:w-auto bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200"
-            >
-              Thêm
-            </button>
-          </form>
-        </div>
+        </form>
 
-        <div class="bg-white dark:bg-gray-800 p-4 md:p-6 rounded-lg shadow-md mb-8">
-          <h2 class="text-xl md:text-2xl font-bold mb-4 text-gray-700 dark:text-gray-200">
-            Tìm kiếm và Lọc
-          </h2>
-          <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
-            <input
-              type="text"
-              id="searchInput"
-              placeholder="Tìm kiếm công việc..."
-              class="flex-grow px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            />
-            <select
-              id="filterPriority"
-              class="px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            >
-              <option value="all">Tất cả độ ưu tiên</option>
-              <option value="Thấp">Thấp</option>
-              <option value="Trung bình">Trung bình</option>
-              <option value="Cao">Cao</option>
+        <div class="mb-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+            <input type="text" id="searchInput" placeholder="Tìm kiếm..." 
+                   class="p-2 border rounded dark:bg-gray-700 dark:text-white">
+            <select id="filterPriority" class="p-2 border rounded dark:bg-gray-700 dark:text-white">
+                <option value="all">Tất cả mức độ</option>
+                <option value="Cao">Cao</option>
+                <option value="Trung bình">Trung bình</option>
+                <option value="Thấp">Thấp</option>
             </select>
-            <select
-              id="filterStatus"
-              class="px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            >
-              <option value="all">Tất cả trạng thái</option>
-              <option value="incomplete">Chưa hoàn thành</option>
-              <option value="completed">Đã hoàn thành</option>
+            <select id="filterStatus" class="p-2 border rounded dark:bg-gray-700 dark:text-white">
+                <option value="all">Tất cả trạng thái</option>
+                <option value="completed">Đã hoàn thành</option>
+                <option value="incomplete">Chưa hoàn thành</option>
             </select>
-            <select
-              id="filterCategory"
-              class="px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            >
-              <option value="all">Tất cả danh mục</option>
+            <select id="filterCategory" class="p-2 border rounded dark:bg-gray-700 dark:text-white">
+                <option value="all">Tất cả danh mục</option>
             </select>
-          </div>
         </div>
 
         <ul id="taskList" class="space-y-4"></ul>
-      </div>
-
-      <!-- Statistics Section -->
-      <div id="statsContent" class="hidden">
-        <h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">
-          Thống kê
-        </h2>
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
-          <p id="totalTasks" class="mb-2"></p>
-          <p id="completedTasks" class="mb-2"></p>
-          <p id="incompleteTasks" class="mb-2"></p>
-          <p id="highPriorityTasks" class="mb-2"></p>
-        </div>
-      </div>
-
-      <!-- Settings Section -->
-      <div id="settingsContent" class="hidden">
-        <h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">
-          Cài đặt
-        </h2>
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
-          <div class="mb-4">
-            <label class="flex items-center">
-              <input
-                type="checkbox"
-                id="darkModeCheckbox"
-                class="form-checkbox h-5 w-5 text-blue-600"
-              />
-              <span class="ml-2 text-gray-700 dark:text-gray-200">Chế độ tối</span>
-            </label>
-          </div>
-          <!-- Add more settings options here -->
-        </div>
-      </div>
     </div>
+
+    <script src="js/auth.js"></script>
     <script src="js/todo.js"></script>
-  </body>
+</body>
 </html>
