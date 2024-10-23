@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Danh sách việc cần làm</title>
+    <title>Todo List</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
     <style>
         .dark { color-scheme: dark; }
         .dark body { background-color: #1a1a1a; color: #e0e0e0; }
@@ -15,66 +17,70 @@
         .dark .text-gray-700 { color: #e0e0e0; }
         .dark .text-gray-800 { color: #f0f0f0; }
         .dark .border-gray-600 { border-color: #4a4a4a; }
+        
+        .spinner {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .task-list {
+            scroll-behavior: smooth;
+        }
+
+        .skip-link {
+            position: absolute;
+            left: -9999px;
+            z-index: 999;
+            padding: 1em;
+            background-color: white;
+            color: black;
+            text-decoration: none;
+        }
+
+        .skip-link:focus {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        dialog::backdrop {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
     </style>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-200">
-    <nav class="bg-white dark:bg-gray-800 shadow-lg p-4">
+    <a href="#main" class="skip-link">Skip to main content</a>
+    
+    <nav class="bg-white dark:bg-gray-800 shadow-lg p-4" role="navigation" aria-label="Main navigation">
         <div class="container mx-auto flex justify-between items-center">
             <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Todo App</h1>
             <div class="flex items-center space-x-4">
-                <button id="darkModeToggle" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700">
+                <button id="darkModeToggle" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700" aria-label="Toggle dark mode">
                     🌓
                 </button>
-                <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded">
-                    Đăng xuất
+                <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded" aria-label="Logout">
+                    Logout
                 </button>
             </div>
         </div>
     </nav>
 
-    <div class="container mx-auto p-4">
-        <form id="addTaskForm" class="mb-8 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input type="text" name="taskInput" placeholder="Thêm công việc mới..." 
-                       class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white" required>
-                <select name="priority" class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white">
-                    <option value="Thấp">Thấp</option>
-                    <option value="Trung bình">Trung bình</option>
-                    <option value="Cao">Cao</option>
-                </select>
-                <input type="date" name="startDate" class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white">
-                <input type="date" name="endDate" class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white">
-                <input type="text" name="category" placeholder="Danh mục" 
-                       class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white">
-                <button type="submit" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
-                    Thêm công việc
-                </button>
-            </div>
-        </form>
-
-        <div class="mb-4 grid grid-cols-1 md:grid-cols-4 gap-4">
-            <input type="text" id="searchInput" placeholder="Tìm kiếm..." 
-                   class="p-2 border rounded dark:bg-gray-700 dark:text-white">
-            <select id="filterPriority" class="p-2 border rounded dark:bg-gray-700 dark:text-white">
-                <option value="all">Tất cả mức độ</option>
-                <option value="Cao">Cao</option>
-                <option value="Trung bình">Trung bình</option>
-                <option value="Thấp">Thấp</option>
-            </select>
-            <select id="filterStatus" class="p-2 border rounded dark:bg-gray-700 dark:text-white">
-                <option value="all">Tất cả trạng thái</option>
-                <option value="completed">Đã hoàn thành</option>
-                <option value="incomplete">Chưa hoàn thành</option>
-            </select>
-            <select id="filterCategory" class="p-2 border rounded dark:bg-gray-700 dark:text-white">
-                <option value="all">Tất cả danh mục</option>
-            </select>
-        </div>
-
-        <ul id="taskList" class="space-y-4"></ul>
-    </div>
+    <main id="main" class="container mx-auto p-4">
+        <div id="taskFormContainer"></div>
+        <div id="taskFiltersContainer"></div>
+        <div id="taskList" class="space-y-4"></div>
+    </main>
 
     <script src="js/auth.js"></script>
-    <script src="js/todo.js"></script>
+    <script type="module" src="js/todo.js"></script>
 </body>
 </html>

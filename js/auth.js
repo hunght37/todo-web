@@ -2,7 +2,10 @@
 function checkAuth() {
   const username = localStorage.getItem('currentUser');
   if (!username) {
-    window.location.href = 'index.html';
+    // Add a small delay to ensure smooth transition
+    setTimeout(() => {
+      window.location.href = 'index.html';
+    }, 100);
     return false;
   }
   return username;
@@ -10,5 +13,26 @@ function checkAuth() {
 
 function logout() {
   localStorage.removeItem('currentUser');
-  window.location.href = 'index.html';
+  // Add a small delay to ensure smooth transition
+  setTimeout(() => {
+    window.location.href = 'index.html';
+  }, 100);
+}
+
+// Check if user is already logged in on login/register pages
+function checkAlreadyLoggedIn() {
+  const username = localStorage.getItem('currentUser');
+  if (username && (window.location.pathname.endsWith('index.html') || 
+                   window.location.pathname.endsWith('register.html'))) {
+    window.location.href = 'todo.html';
+    return true;
+  }
+  return false;
+}
+
+// Run check on login/register pages
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', checkAlreadyLoggedIn);
+} else {
+  checkAlreadyLoggedIn();
 }

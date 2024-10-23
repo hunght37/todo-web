@@ -3,35 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng nhập</title>
+    <title>Login</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    <style>
+        .spinner {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .form-control:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 <body class="bg-gray-100">
     <div class="flex justify-center items-center h-screen">
         <div class="bg-white p-8 rounded shadow-md w-96">
-            <h2 class="text-2xl font-bold mb-6 text-center">Đăng nhập</h2>
-            <form id="loginForm">
+            <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
+            <form id="loginForm" class="space-y-4">
                 <div class="mb-4">
-                    <label for="username" class="block text-gray-700 font-bold mb-2">Tên đăng nhập:</label>
-                    <input type="text" id="username" name="username" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <label for="username" class="block text-gray-700 font-bold mb-2">Username:</label>
+                    <input type="text" 
+                           id="username" 
+                           name="username" 
+                           autocomplete="username"
+                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                           required>
                 </div>
                 <div class="mb-6">
-                    <label for="password" class="block text-gray-700 font-bold mb-2">Mật khẩu:</label>
-                    <input type="password" id="password" name="password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <label for="password" class="block text-gray-700 font-bold mb-2">Password:</label>
+                    <input type="password" 
+                           id="password" 
+                           name="password" 
+                           autocomplete="current-password"
+                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                           required>
                 </div>
                 <div class="flex items-center justify-between">
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                        Đăng nhập
+                    <button type="submit" 
+                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full">
+                        Login
                     </button>
                 </div>
-                <div id="error" class="text-red-500 text-xs italic mt-2 hidden">Tên đăng nhập hoặc mật khẩu không đúng</div>
+                <div id="error" class="text-red-500 text-sm mt-2 hidden"></div>
             </form>
             <p class="text-center text-gray-500 text-xs mt-4">
-                Chưa có tài khoản? <a href="register.html" class="text-blue-500 hover:text-blue-700">Đăng ký tại đây</a>.
+                Don't have an account? <a href="register.html" class="text-blue-500 hover:text-blue-700">Register here</a>.
             </p>
         </div>
     </div>
     <script src="js/db.js"></script>
+    <script src="js/auth.js"></script>
     <script src="js/login.js"></script>
 </body>
 </html>

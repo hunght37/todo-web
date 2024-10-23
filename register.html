@@ -1,75 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Đăng ký</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
-  </head>
-  <body class="bg-gray-100">
-    <div class="flex justify-center items-center h-screen">
-      <div class="bg-white p-8 rounded shadow-md w-96">
-        <h2 class="text-2xl font-bold mb-6 text-center">Đăng ký</h2>
-        <form id="registerForm">
-          <div class="mb-4">
-            <label for="username" class="block text-gray-700 font-bold mb-2"
-              >Tên đăng nhập:</label
-            >
-            <input
-              type="text"
-              id="username"
-              name="username"
-              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              required
-            />
-          </div>
-          <div class="mb-6">
-            <label for="password" class="block text-gray-700 font-bold mb-2"
-              >Mật khẩu:</label
-            >
-            <input
-              type="password"
-              id="password"
-              name="password"
-              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              required
-              oninput="updatePasswordStrength()"
-            />
-            <div id="password-strength" class="mt-1 h-2 w-full rounded-full"></div>
-          </div>
-          <div class="mb-6">
-            <label
-              for="confirmPassword"
-              class="block text-gray-700 font-bold mb-2"
-              >Xác nhận mật khẩu:</label
-            >
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              required
-            />
-          </div>
-          <div class="flex items-center justify-between">
-            <button
-              type="submit"
-              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
-              Đăng ký
-            </button>
-          </div>
-          <div id="error" class="text-red-500 text-xs italic mt-2 hidden">
-            Lỗi đăng ký
-          </div>
-        </form>
-      </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    <style>
+        .spinner {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .form-control:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .password-strength {
+            height: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .password-strength.weak { background-color: #ef4444; }
+        .password-strength.medium { background-color: #f59e0b; }
+        .password-strength.strong { background-color: #10b981; }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex justify-center items-center min-h-screen p-4">
+        <div class="bg-white p-8 rounded shadow-md w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-6 text-center">Create Account</h2>
+            <form id="registerForm" class="space-y-4">
+                <div class="space-y-1">
+                    <label for="username" class="block text-sm font-medium text-gray-700">
+                        Username
+                    </label>
+                    <input type="text" 
+                           id="username" 
+                           name="username" 
+                           autocomplete="username"
+                           class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                           required>
+                </div>
+
+                <div class="space-y-1">
+                    <label for="password" class="block text-sm font-medium text-gray-700">
+                        Password
+                    </label>
+                    <input type="password" 
+                           id="password" 
+                           name="password" 
+                           autocomplete="new-password"
+                           class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                           required>
+                    <div id="password-strength" class="w-full rounded-full overflow-hidden">
+                        <div class="password-strength h-1 w-0"></div>
+                    </div>
+                    <p id="password-feedback" class="text-xs text-gray-500 mt-1"></p>
+                </div>
+
+                <div class="space-y-1">
+                    <label for="confirmPassword" class="block text-sm font-medium text-gray-700">
+                        Confirm Password
+                    </label>
+                    <input type="password" 
+                           id="confirmPassword" 
+                           name="confirmPassword" 
+                           autocomplete="new-password"
+                           class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                           required>
+                </div>
+
+                <div id="error" class="text-red-500 text-sm hidden"></div>
+
+                <button type="submit" 
+                        class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                    Create Account
+                </button>
+            </form>
+
+            <p class="text-center text-sm text-gray-500 mt-4">
+                Already have an account? 
+                <a href="index.html" class="text-blue-500 hover:text-blue-700">
+                    Login here
+                </a>
+            </p>
+        </div>
     </div>
+
     <script src="js/db.js"></script>
+    <script src="js/auth.js"></script>
     <script src="js/passwordStrength.js"></script>
     <script src="js/register.js"></script>
-  </body>
+</body>
 </html>
