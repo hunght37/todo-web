@@ -3,6 +3,7 @@
     "start": "servor --reload"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "servor": "^4.0.2"
   }
 }
