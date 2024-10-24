@@ -2,12 +2,22 @@
 const loginForm = document.getElementById('loginForm');
 const errorDiv = document.getElementById('error');
 let isLoading = false;
+let dbInitialized = false;
+
+class AuthError extends Error {
+  constructor(message, code) {
+    super(message);
+    this.name = 'AuthError';
+    this.code = code;
+  }
+}
 
 // Initialize database when page loads
 initDB().then(() => {
+  dbInitialized = true;
   console.log("Database initialized");
 }).catch(error => {
-  showError("Database initialization failed. Please refresh the page.");
+  showError(error.message || "Database initialization failed");
   console.error("Database error:", error);
 });
 
@@ -31,58 +41,82 @@ function updateButtonState(button, loading) {
     'Login';
 }
 
+// Validate login input
+function validateLoginInput(username, password) {
+  if (!username) {
+    throw new AuthError('Username is required', 'MISSING_USERNAME');
+  }
+  if (!password) {
+    throw new AuthError('Password is required', 'MISSING_PASSWORD');
+  }
+  if (username.length < 3) {
+    throw new AuthError('Username must be at least 3 characters long', 'INVALID_USERNAME');
+  }
+  if (password.length < 8) {
+    throw new AuthError('Password must be at least 8 characters long', 'INVALID_PASSWORD');
+  }
+}
+
 // Main login handler
 loginForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   
-  // Prevent multiple submissions
   if (isLoading) return;
+  
+  if (!dbInitialized) {
+    showError('Please wait for database initialization');
+    return;
+  }
 
   const submitButton = loginForm.querySelector('button[type="submit"]');
   const username = DOMPurify.sanitize(document.getElementById('username').value.trim());
   const password = document.getElementById('password').value;
-
-  // Basic validation
-  if (!username || !password) {
-    showError('Please enter both username and password');
-    return;
-  }
 
   try {
     isLoading = true;
     clearError();
     updateButtonState(submitButton, true);
 
+    // Validate input
+    validateLoginInput(username, password);
+
     // Check rate limiting
-    if (!await checkRateLimit(username)) {
-      throw new Error('Too many login attempts. Please try again in 15 minutes.');
+    const canLogin = await checkRateLimit(username);
+    if (!canLogin) {
+      throw new AuthError('Too many login attempts. Please try again in 15 minutes.', 'RATE_LIMIT');
     }
 
     // Get user and verify credentials
     const user = await getUser(username);
     if (!user) {
-      throw new Error('Invalid username or password');
+      throw new AuthError('Invalid username or password', 'INVALID_CREDENTIALS');
     }
 
     // Verify password
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
       await updateLoginAttempts(username);
-      throw new Error('Invalid username or password');
+      throw new AuthError('Invalid username or password', 'INVALID_CREDENTIALS');
     }
 
     // Successful login
-    await updateLoginAttempts(username, true); // Reset login attempts
+    await updateLoginAttempts(username, true);
     localStorage.setItem('currentUser', username);
     
-    // Redirect with a slight delay to ensure localStorage is set
-    setTimeout(() => {
-      window.location.href = 'todo.html';
-    }, 100);
+    window.location.href = 'todo.html';
 
   } catch (error) {
-    showError(error.message);
-    console.error('Login error:', error);
+    const errorMessage = error instanceof AuthError ? 
+      error.message : 
+      'An unexpected error occurred. Please try again.';
+    
+    showError(errorMessage);
+    console.error('Login error:', {
+      name: error.name,
+      message: error.message,
+      code: error.code,
+      stack: error.stack
+    });
   } finally {
     isLoading = false;
     updateButtonState(submitButton, false);
